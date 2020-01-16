@@ -18,12 +18,17 @@ public enum CentrifugeError: Error {
     case replyError(code: UInt32, message: String)
 }
 
-public struct CentrifugeClientConfig {
+public struct CentrifugePKCS12SSLCertInfo {
+    public let URL: URL
+    public let password: String
     
-    public struct PKCS12SSLCertInfo {
-        let URL: URL
-        let password: String
+    public init(URL: URL, password: String) {
+        self.URL = URL
+        self.password = password
     }
+}
+
+public struct CentrifugeClientConfig {
     
     public var timeout = 5.0
     public var debug = false
@@ -32,7 +37,7 @@ public struct CentrifugeClientConfig {
     public var maxReconnectDelay = 20.0
     public var privateChannelPrefix = "$"
     public var pingInterval = 25.0
-    public var clientSSLCertificate: PKCS12SSLCertInfo? = nil
+    public var clientSSLCertificate: CentrifugePKCS12SSLCertInfo? = nil
     
     public init() {}
 }
