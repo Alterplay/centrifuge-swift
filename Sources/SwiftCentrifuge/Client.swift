@@ -19,6 +19,12 @@ public enum CentrifugeError: Error {
 }
 
 public struct CentrifugeClientConfig {
+    
+    public struct PKCS12SSLCertInfo {
+        let URL: URL
+        let password: String
+    }
+    
     public var timeout = 5.0
     public var debug = false
     public var headers = [String:String]()
@@ -26,6 +32,7 @@ public struct CentrifugeClientConfig {
     public var maxReconnectDelay = 20.0
     public var privateChannelPrefix = "$"
     public var pingInterval = 25.0
+    public var clientSSLCertificate: PKCS12SSLCertInfo? = nil
     
     public init() {}
 }
@@ -179,6 +186,9 @@ public class CentrifugeClient {
                 request.addValue(value, forHTTPHeaderField: key)
             }
             let ws = WebSocket(request: request)
+            do { try strongSelf.config.clientSSLCertificate.flatMap {
+                ws.sslClientCertificate = try SSLClientCertificate(pkcs12Url: $0.URL, password: $0.password)
+            } } catch {}
             if strongSelf.config.tlsSkipVerify {
                 ws.disableSSLCertValidation = true
             }
